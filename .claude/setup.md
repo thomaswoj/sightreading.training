@@ -34,8 +34,8 @@ make migrate
 
 ```sh
 npm install
-# esbuild is invoked via Tup (build system) or directly per Tuprules.tup
-# Tup requires macFUSE on macOS; workaround: tup generate build.sh && ./build.sh
+make build   # one-off build
+make watch   # rebuild on save (use this while developing)
 ```
 
 ## Running the app

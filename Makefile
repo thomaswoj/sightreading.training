@@ -1,5 +1,14 @@
 
-.PHONY: new_migration migrate init_schema test_db lint lint_js checkpoint restore_checkpoint annotate_models
+.PHONY: new_migration migrate init_schema test_db lint lint_js checkpoint restore_checkpoint annotate_models build watch
+
+ESBUILD = node_modules/.bin/esbuild
+ESBUILD_FLAGS = --log-level=warning --bundle --sourcemap --external:/static/fonts/*
+
+build:
+	NODE_PATH=static/js $(ESBUILD) static/js/st/main.jsx $(ESBUILD_FLAGS) --outfile=static/main.js
+
+watch:
+	NODE_PATH=static/js $(ESBUILD) static/js/st/main.jsx $(ESBUILD_FLAGS) --outfile=static/main.js --watch
 
 new_migration:
 	(echo "  [$$(date +%s)]: =>"; echo) >> migrations.moon
