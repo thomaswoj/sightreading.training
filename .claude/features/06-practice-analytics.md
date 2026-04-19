@@ -36,35 +36,50 @@ Each session record should capture enough context to reconstruct what the user w
 
 ---
 
+## What Already Exists
+
+More infrastructure is in place than it might appear:
+
+- **Full auth system** — `users` table with `id`, `username`, `email`, `last_active_at`, `created_at`. Login/session flow is complete. `user_id` FK is available immediately.
+- **`hourly_hits`** — already recording hits and misses per user, bucketed by the hour. Raw accuracy data is there; it just lacks context (no key, mode, or hand recorded alongside it).
+- **`song_user_time`** — tracks cumulative time spent per song per user in play-along mode; uses `created_at` / `updated_at` via Lapis timestamps.
+- **`presets`** — saves named practice configurations as JSONB per user (key signature, clef, hand setting, etc. are likely in here already).
+
+**What's missing:** session-level grouping with context, and a dashboard to surface it. The hit/miss counters exist but can't answer "how did I do in F# minor on Tuesday" because the key isn't stored alongside the count.
+
+---
+
 ## Storage
 
-The app already has a PostgreSQL database and a Lapis backend. The natural approach:
+The app already has PostgreSQL and a Lapis backend — no new infrastructure needed. The work is one new table and extending the existing hit-recording call to pass context.
 
-- New `practice_sessions` table — one row per session
-- New `practice_session_notes` table (optional, finer grain) — one row per note attempt if per-pitch analytics are wanted
-- Sessions written at session end (or periodically for long sessions)
-- All queries through existing Lapis models/controllers — no new infrastructure needed
+- New `practice_sessions` table — one row per session, written at session end (or on tab close via `beforeunload`)
+- Existing `hourly_hits` hits/misses link to a `session_id` FK, or session totals are stored directly on `practice_sessions` (simpler to start)
+- New `practice_session_notes` table (optional, finer grain) — one row per note attempt if per-pitch analytics are wanted later
 
-### Minimal schema sketch
+### Schema
 
 ```sql
 CREATE TABLE practice_sessions (
   id          serial PRIMARY KEY,
   user_id     integer NOT NULL REFERENCES users(id),
-  started_at  timestamptz NOT NULL DEFAULT now(),
-  duration_s  integer,
-  mode        text,
-  clef        text,
-  hand        text,
-  key_sig     text,
-  note_value  text,
+  started_at  timestamptz NOT NULL DEFAULT now(),  -- when the session began
+  ended_at    timestamptz,                          -- written on close/end
+  duration_s  integer,                             -- derived: ended_at - started_at
+  mode        text,        -- random-generator | scroll | play-along | pattern-sets
+  clef        text,        -- treble | bass | grand
+  hand        text,        -- LH | RH | both
+  key_sig     text,        -- e.g. "F# minor", "Bb major"
+  note_value  text,        -- whole | quarter | 8th | 16th
   bpm         integer,
   attempted   integer,
   correct     integer,
-  set_library text,
+  set_library text,        -- null unless pattern-sets mode
   sets_done   integer
 );
 ```
+
+`started_at` defaults to `now()` on insert so the timestamp is always captured even if the session record is only flushed at the end. `ended_at` is written when the session closes. Both timestamps are available for trend queries ("sessions on a given day", "sessions between two dates", etc.).
 
 ---
 
@@ -130,7 +145,6 @@ A new `/dashboard` or `/stats` route (separate page, not a modal). Sections:
 
 ## Open Questions
 
-- Does the app currently have user authentication / user IDs, or is it single-user? (Affects whether `user_id` FK is needed or if a single global table is fine for now.)
-- Should sessions be written immediately at end, or periodically (in case the user just closes the tab)?
+- Should sessions be written on `beforeunload` (best effort, can be lost if tab crashes) or periodically flushed every N minutes mid-session?
 - Minimum session length to bother recording — avoid polluting history with accidental 5-second opens?
 - Which charting library fits the existing stack (React + esbuild, no heavy dependencies preferred)?
