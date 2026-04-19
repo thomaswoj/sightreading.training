@@ -188,6 +188,7 @@ export class SettingsPanel extends React.PureComponent {
   renderBeamGroupSize() {
     let noteValue = this.props.currentNoteValue || "whole"
     if (noteValue !== "eighth" && noteValue !== "sixteenth") return null
+    if (this.props.currentStaff?.name === "grand") return null
 
     let beamGroupSize = this.props.beamGroupSize || "off"
     let options = [["off", "Off"], ["2", "2"], ["3", "3"], ["4", "4"]]

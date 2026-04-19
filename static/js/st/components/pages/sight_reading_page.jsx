@@ -462,7 +462,8 @@ export default class SightReadingPage extends React.Component {
 
     let update = {
       currentStaff: staff,
-      notes: null
+      notes: null,
+      ...(staff.name === "grand" ? { beamGroupSize: "off" } : {}),
     }
 
     // if the current generator is not compatible with new staff change it

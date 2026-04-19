@@ -92,9 +92,18 @@ export default class WholeNotes extends React.PureComponent {
       a[0].getStart() - b[0].getStart()
     )
 
-    // chunk into fixed groups — skip any group that contains chords (multiple notes per column)
-    for (let i = 0; i + beamGroupSize <= columns.length; i += beamGroupSize) {
-      let group = columns.slice(i, i + beamGroupSize)
+    // group by stable index (consumedCount + columnIdx) so played notes don't shift groups
+    let groupsByKey = {}
+    for (let col of columns) {
+      let stableStart = col[0].stableStart ?? col[0].getStart()
+      let key = Math.floor(stableStart / beamGroupSize)
+      if (!groupsByKey[key]) groupsByKey[key] = []
+      groupsByKey[key].push(col)
+    }
+
+    for (let group of Object.values(groupsByKey)) {
+      // only beam complete groups
+      if (group.length !== beamGroupSize) continue
 
       if (group.some(col => col.length !== 1)) continue
 
@@ -119,6 +128,26 @@ export default class WholeNotes extends React.PureComponent {
       })
     }
 
+    // detect tail notes: single notes whose earlier group partners were consumed
+    for (let col of columns) {
+      if (col.length !== 1) continue
+      let note = col[0]
+      if (out.has(note.id)) continue
+      let stableStart = note.stableStart ?? note.getStart()
+      let positionInGroup = stableStart % beamGroupSize
+      if (positionInGroup === 0) continue
+      let row = noteStaffOffset(this.props.keySignature.enharmonic(note.note))
+      let direction = this.getStemDirection(row)
+      out.set(note.id, {
+        direction,
+        beamCount: noteValue === "sixteenth" ? 2 : 1,
+        isTail: true,
+        positionInGroup,
+        referenceRow: row,
+        noteRow: row,
+      })
+    }
+
     return out
   }
 
@@ -136,10 +165,11 @@ export default class WholeNotes extends React.PureComponent {
     let left = offsetLeft + note.getStart() * this.props.pixelsPerBeat
 
     let column = notesByColumn[note.getStart().toString()]
+    let noteValue = props.noteValue
 
     let style = {
       top: `${Math.floor(fromTop * 25/2)}%`,
-      left: `${left}px`
+      left: noteValue === "whole" ? `${left}px` : `calc(${left}px + .4em)`
     }
 
     let outside = row > props.upperRow || row < props.lowerRow
@@ -149,8 +179,6 @@ export default class WholeNotes extends React.PureComponent {
     if (props.noteClasses) {
       noteClasses = props.noteClasses[note.id]
     }
-
-    let noteValue = props.noteValue
     let beamed = beamedNotes.get(note.id)
 
     let isChord = column.length > 1
@@ -195,8 +223,8 @@ export default class WholeNotes extends React.PureComponent {
     const stemTopUpPx = -40.8         // -170% of 24px
     const beam1UpPx = -40.8           // -170%
     const beam2UpPx = -33.6           // -140%
-    const beam1DownPx = 58.8          // 245%
-    const beam2DownPx = 51.6          // 215%
+    const beam1DownPx = 60.8          // 245% + 2px
+    const beam2DownPx = 53.6          // 215% + 2px
 
     let stemStyle = undefined
     let beamExtraPx = 0
@@ -241,6 +269,26 @@ export default class WholeNotes extends React.PureComponent {
         parts.push(<span
           key="beam-2"
           style={{ width: `${beamWidth}px`, top: `${b2Top}px` }}
+          className={classNames(styles.beam, styles.beam_2, beamClass)}
+        ></span>)
+      }
+    }
+
+    if (beamed && beamed.isTail) {
+      // ghost beam extending left to where consumed group partners were
+      let tailWidth = beamed.positionInGroup * props.pixelsPerBeat
+      let beamClass = stemDirection === "up" ? styles.beam_up : styles.beam_down
+      let b1Top = stemDirection === "up" ? beam1UpPx : beam1DownPx
+      let b2Top = stemDirection === "up" ? beam2UpPx : beam2DownPx
+      parts.push(<span
+        key="beam-tail-1"
+        style={{ width: `${tailWidth}px`, top: `${b1Top}px`, transform: 'translateX(-100%)', opacity: 0.25 }}
+        className={classNames(styles.beam, styles.beam_1, beamClass)}
+      ></span>)
+      if (beamed.beamCount > 1) {
+        parts.push(<span
+          key="beam-tail-2"
+          style={{ width: `${tailWidth}px`, top: `${b2Top}px`, transform: 'translateX(-100%)', opacity: 0.25 }}
           className={classNames(styles.beam, styles.beam_2, beamClass)}
         ></span>)
       }
