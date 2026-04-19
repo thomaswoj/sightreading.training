@@ -5,11 +5,6 @@ import {parseNote, noteStaffOffset} from "st/music"
 import * as types from "prop-types"
 import styles from "st/components/staff.module.css"
 
-const MIN_BEAM_WIDTH = 4
-const BEAM_WIDTH_OFFSET = 8
-const MIN_BEAM_SLOPE_DEG = -14
-const MAX_BEAM_SLOPE_DEG = 14
-const BEAM_SLOPE_MULTIPLIER = 2.5
 
 export default class WholeNotes extends React.PureComponent {
   static defaultProps = {
@@ -97,35 +92,19 @@ export default class WholeNotes extends React.PureComponent {
       a[0].getStart() - b[0].getStart()
     )
 
-    for (let i = 0; i < columns.length;) {
+    // chunk into fixed groups — skip any group that contains chords (multiple notes per column)
+    for (let i = 0; i + beamGroupSize <= columns.length; i += beamGroupSize) {
       let group = columns.slice(i, i + beamGroupSize)
-      if (group.length < beamGroupSize) {
-        break
-      }
 
-      let consecutive = true
-      let singleNotes = true
-      for (let k = 0; k < group.length; k++) {
-        if (group[k].length !== 1) {
-          singleNotes = false
-          break
-        }
-
-        if (k > 0 && group[k][0].getStart() !== group[k - 1][0].getStart() + 1) {
-          consecutive = false
-          break
-        }
-      }
-
-      if (!singleNotes || !consecutive) {
-        i += 1
-        continue
-      }
+      if (group.some(col => col.length !== 1)) continue
 
       let notes = group.map(g => g[0])
       let rows = notes.map(n => noteStaffOffset(this.props.keySignature.enharmonic(n.note)))
+      // stem direction decided by average pitch of whole group so all stems go same way
       let direction = this.getStemDirection(rows[0], rows)
       let beamCount = noteValue === "sixteenth" ? 2 : 1
+      // reference row: highest note for stem_up, lowest for stem_down
+      let referenceRow = direction === "up" ? Math.max(...rows) : Math.min(...rows)
 
       notes.forEach((note, idx) => {
         out.set(note.id, {
@@ -133,13 +112,11 @@ export default class WholeNotes extends React.PureComponent {
           beamCount,
           firstNote: notes[0],
           lastNote: notes[notes.length - 1],
-          firstRow: rows[0],
-          lastRow: rows[rows.length - 1],
           isStart: idx === 0,
+          referenceRow,
+          noteRow: rows[idx],
         })
       })
-
-      i += beamGroupSize
     }
 
     return out
@@ -175,9 +152,18 @@ export default class WholeNotes extends React.PureComponent {
 
     let noteValue = props.noteValue
     let beamed = beamedNotes.get(note.id)
-    let stemDirection = beamed?.direction || this.getStemDirection(row)
-    let useStem = noteValue !== "whole"
-    let useFlag = (noteValue === "eighth" || noteValue === "sixteenth") && !beamed
+
+    let isChord = column.length > 1
+    let chordRows = isChord ? column.map(n => noteStaffOffset(props.keySignature.enharmonic(n.note))) : null
+    let stemDirection = beamed?.direction || this.getStemDirection(
+      isChord ? chordRows.reduce((s, r) => s + r, 0) / chordRows.length : row
+    )
+    // in a chord, only the outermost note owns the stem (lowest for up, highest for down)
+    let isStemOwner = !isChord || (
+      stemDirection === "up" ? row === Math.min(...chordRows) : row === Math.max(...chordRows)
+    )
+    let useStem = noteValue !== "whole" && isStemOwner
+    let useFlag = (noteValue === "eighth" || noteValue === "sixteenth") && !beamed && isStemOwner
 
     let classes = classNames(styles.note, {
       [styles.is_flat]: accidentals === -1,
@@ -193,46 +179,69 @@ export default class WholeNotes extends React.PureComponent {
       [styles.stem_down]: stemDirection === "down",
     }, noteClasses, props.staticNoteClasses)
 
-    let noteHeadSrc = (noteValue === "whole" || noteValue === "half")
-      ? "/static/svg/noteheads.s0.svg"
-      : "/static/svg/noteheads.s2.svg"
+    let noteHeadSrc = noteValue === "whole"
+      ? "/static/staff/whole_note.svg"
+      : noteValue === "half"
+      ? "/static/staff/half_note.svg"
+      : "/static/staff/quarter_note.svg"
 
     let parts = [
       <img key="head" className={styles.primary} src={noteHeadSrc} />
     ]
 
-    if (useStem) {
-      parts.push(<span key="stem" className={styles.stem}></span>)
-    }
+    // px constants derived from CSS: staff=120px (4*30), note div=24px (20%), row=15px (30/2)
+    const rowPx = 15
+    const defaultStemHeightPx = 52.8  // 220% of 24px
+    const stemTopUpPx = -40.8         // -170% of 24px
+    const beam1UpPx = -40.8           // -170%
+    const beam2UpPx = -33.6           // -140%
+    const beam1DownPx = 58.8          // 245%
+    const beam2DownPx = 51.6          // 215%
 
-    if (useFlag) {
-      let flagCount = noteValue === "sixteenth" ? 2 : 1
-      parts.push(<span key="flag-1" className={classNames(styles.flag, styles.flag_1)}></span>)
-      if (flagCount > 1) {
-        parts.push(<span key="flag-2" className={classNames(styles.flag, styles.flag_2)}></span>)
+    let stemStyle = undefined
+    let beamExtraPx = 0
+    if (beamed && useStem) {
+      beamExtraPx = Math.abs(row - beamed.referenceRow) * rowPx
+      if (stemDirection === "up") {
+        stemStyle = {
+          top: `${stemTopUpPx - beamExtraPx}px`,
+          height: `${defaultStemHeightPx + beamExtraPx}px`,
+        }
+      } else {
+        stemStyle = { height: `${defaultStemHeightPx + beamExtraPx}px` }
       }
     }
 
+    if (useStem) {
+      parts.push(<span key="stem" className={styles.stem} style={stemStyle}></span>)
+    }
+
+    if (useFlag) {
+      const flagGlyphs = {
+        eighth:    { up: "\uE240", down: "\uE241" },
+        sixteenth: { up: "\uE242", down: "\uE243" },
+      }
+      let dir = stemDirection === "down" ? "down" : "up"
+      let glyph = flagGlyphs[noteValue][dir]
+      parts.push(<span key="flag" className={classNames(styles.flag, styles[`flag_${dir}`])}>{glyph}</span>)
+    }
+
     if (beamed && beamed.isStart) {
-      let beamWidth = Math.max(MIN_BEAM_WIDTH, (beamed.lastNote.getStart() - beamed.firstNote.getStart()) * props.pixelsPerBeat + BEAM_WIDTH_OFFSET)
-      let slope = Math.max(MIN_BEAM_SLOPE_DEG, Math.min(MAX_BEAM_SLOPE_DEG, (beamed.lastRow - beamed.firstRow) * BEAM_SLOPE_MULTIPLIER))
+      // span from this stem to last note's stem — +2 to cover the last stem's own width
+      let beamWidth = (beamed.lastNote.getStart() - beamed.firstNote.getStart()) * props.pixelsPerBeat + 2
+      let beamClass = stemDirection === "up" ? styles.beam_up : styles.beam_down
+      let b1Top = stemDirection === "up" ? beam1UpPx - beamExtraPx : beam1DownPx + beamExtraPx
+      let b2Top = stemDirection === "up" ? beam2UpPx - beamExtraPx : beam2DownPx + beamExtraPx
       parts.push(<span
         key="beam-1"
-          style={{ width: `${beamWidth}px`, transform: `rotate(${slope}deg)` }}
-          className={classNames(styles.beam, styles.beam_1, {
-          [styles.beam_up]: stemDirection === "up",
-          [styles.beam_down]: stemDirection === "down",
-        })}
+        style={{ width: `${beamWidth}px`, top: `${b1Top}px` }}
+        className={classNames(styles.beam, styles.beam_1, beamClass)}
       ></span>)
-
       if (beamed.beamCount > 1) {
         parts.push(<span
           key="beam-2"
-          style={{ width: `${beamWidth}px`, transform: `rotate(${slope}deg)` }}
-          className={classNames(styles.beam, styles.beam_2, {
-            [styles.beam_up]: stemDirection === "up",
-            [styles.beam_down]: stemDirection === "down",
-          })}
+          style={{ width: `${beamWidth}px`, top: `${b2Top}px` }}
+          className={classNames(styles.beam, styles.beam_2, beamClass)}
         ></span>)
       }
     }

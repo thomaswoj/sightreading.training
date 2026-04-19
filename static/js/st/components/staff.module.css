@@ -261,7 +261,7 @@
 
             &.stem_up {
                 .stem {
-                    left: 82%;
+                    left: 92%;
                     top: -170%;
                     height: 220%;
                 }
@@ -269,7 +269,7 @@
 
             &.stem_down {
                 .stem {
-                    left: 18%;
+                    left: 4%;
                     top: 45%;
                     height: 220%;
                 }
@@ -277,60 +277,41 @@
 
             .flag {
                 position: absolute;
-                width: 16px;
-                height: 8px;
-                background: #111;
-                border-radius: 4px;
+                font-family: 'Bravura', serif;
+                font-size: 320%;
+                line-height: 1;
                 z-index: 2;
             }
 
             &.stem_up {
-                .flag {
-                    left: calc(82% + 1px);
-                    transform-origin: left center;
-                    transform: rotate(26deg);
-                }
-
-                .flag_1 {
-                    top: -170%;
-                }
-
-                .flag_2 {
-                    top: -140%;
+                .flag_up {
+                    left: calc(96% - 1px);
+                    top: -260%;
                 }
             }
 
             &.stem_down {
-                .flag {
-                    left: calc(18% - 14px);
-                    transform-origin: right center;
-                    transform: rotate(-26deg);
-                }
-
-                .flag_1 {
-                    top: 250%;
-                }
-
-                .flag_2 {
-                    top: 220%;
+                .flag_down {
+                    left: calc(11% - 2px);
+                    top: 195%;
                 }
             }
 
             .beam {
                 position: absolute;
-                height: 8px;
+                height: 5px;
                 background: #111;
                 transform-origin: left center;
-                border-radius: 2px;
+                border-radius: 1px;
                 z-index: 1;
             }
 
             .beam_up {
-                left: calc(82% + 1px);
+                left: calc(92% + 1px);
             }
 
             .beam_down {
-                left: calc(18% - 1px);
+                left: calc(4% - 1px);
             }
 
             .beam_1.beam_up {

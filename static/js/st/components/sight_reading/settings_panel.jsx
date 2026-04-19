@@ -51,7 +51,18 @@ export class SettingsPanel extends React.PureComponent {
       <section className={styles.settings_group}>
         <h4>Staff</h4>
         {this.renderStaves()}
-        {this.renderRhythmNotation()}
+      </section>
+
+      <section className={styles.settings_group}>
+        <h4>Note Value</h4>
+        {this.renderNoteValues()}
+      </section>
+
+      {this.renderBeamGroupSize()}
+
+      <section className={styles.settings_group}>
+        <h4>Stem Direction</h4>
+        {this.renderStemDirection()}
       </section>
 
       <section className={styles.settings_group}>
@@ -153,67 +164,61 @@ export class SettingsPanel extends React.PureComponent {
     </div>
   }
 
-  renderRhythmNotation() {
+  renderNoteValues() {
     let noteValue = this.props.currentNoteValue || "whole"
-    let beamGroupSize = this.props.beamGroupSize || "off"
-    let stemDirection = this.props.stemDirection || "auto"
-
-    let noteValues = [
+    let options = [
       ["whole", "Whole"],
       ["half", "Half"],
       ["quarter", "Quarter"],
       ["eighth", "8th"],
       ["sixteenth", "16th"],
     ]
+    return <div className={styles.button_group}>
+      {options.map(([value, label]) => <button
+        type="button"
+        key={value}
+        onClick={() => this.props.setNoteValue && this.props.setNoteValue(value)}
+        className={classNames(styles.toggle_option, {
+          [styles.active]: noteValue === value
+        })}>{label}</button>)
+      }
+    </div>
+  }
 
-    let stemDirections = [
-      ["auto", "Auto"],
-      ["up", "Up"],
-      ["down", "Down"],
-    ]
+  renderBeamGroupSize() {
+    let noteValue = this.props.currentNoteValue || "whole"
+    if (noteValue !== "eighth" && noteValue !== "sixteenth") return null
 
-    return <>
-      <div className={styles.input_label}>Note value</div>
+    let beamGroupSize = this.props.beamGroupSize || "off"
+    let options = [["off", "Off"], ["2", "2"], ["3", "3"], ["4", "4"]]
+    return <section className={styles.settings_group}>
+      <h4>Beam Group Size</h4>
       <div className={styles.button_group}>
-        {
-          noteValues.map(([value, label]) => <button
-            type="button"
-            key={value}
-            onClick={e => this.props.setNoteValue && this.props.setNoteValue(value)}
-            className={classNames(styles.toggle_option, {
-              [styles.active]: noteValue === value
-            })}>{label}</button>)
+        {options.map(([value, label]) => <button
+          type="button"
+          key={value}
+          onClick={() => this.props.setBeamGroupSize && this.props.setBeamGroupSize(value)}
+          className={classNames(styles.toggle_option, {
+            [styles.active]: beamGroupSize === value
+          })}>{label}</button>)
         }
       </div>
+    </section>
+  }
 
-      {(noteValue === "eighth" || noteValue === "sixteenth") ? <>
-        <div className={styles.input_label}>Beam group size</div>
-        <div className={styles.button_group}>
-          {
-            [["off", "Off"], ["2", "2"], ["3", "3"], ["4", "4"]].map(([value, label]) => <button
-              type="button"
-              key={value}
-              onClick={e => this.props.setBeamGroupSize && this.props.setBeamGroupSize(value)}
-              className={classNames(styles.toggle_option, {
-                [styles.active]: beamGroupSize === value
-              })}>{label}</button>)
-          }
-        </div>
-      </> : null}
-
-      <div className={styles.input_label}>Stem direction</div>
-      <div className={styles.button_group}>
-        {
-          stemDirections.map(([value, label]) => <button
-            type="button"
-            key={value}
-            onClick={e => this.props.setStemDirection && this.props.setStemDirection(value)}
-            className={classNames(styles.toggle_option, {
-              [styles.active]: stemDirection === value
-            })}>{label}</button>)
-        }
-      </div>
-    </>
+  renderStemDirection() {
+    let stemDirection = this.props.stemDirection || "auto"
+    let options = [["auto", "Auto"], ["up", "Up"], ["down", "Down"]]
+    return <div className={styles.button_group}>
+      {options.map(([value, label]) => <button
+        type="button"
+        key={value}
+        onClick={() => this.props.setStemDirection && this.props.setStemDirection(value)}
+        className={classNames(styles.toggle_option, {
+          [styles.active]: stemDirection === value
+        })}>{label}</button>)
+      }
+    </div>
   }
 
   renderGenerators() {
