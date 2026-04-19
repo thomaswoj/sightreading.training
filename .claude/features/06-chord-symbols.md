@@ -99,9 +99,9 @@ These can be hardcoded as a starting set, with user-defined progressions as a fu
 
 ## Interaction with Other Features
 
-- **Bar lines and time signature** (`02-bar-lines-time-signature.md`) — chord symbols align to bar lines; this feature effectively requires bars to be enabled and makes little sense without them.
+- **Bar lines and time signature** (`01-bar-lines-time-signature.md`) — chord symbols align to bar lines; this feature effectively requires bars to be enabled and makes little sense without them.
 - **Pattern sets** (`04-pattern-sets.md`) — sets can carry chord symbol metadata; the two features share the chord data model.
-- **Static staff view** (`00-play-along-staff.md`) — chord symbols above the staff are a natural addition to the static page layout; position above the top system line per measure.
+- **Static staff view** (`09-play-along-staff.md`) — chord symbols above the staff are a natural addition to the static page layout; position above the top system line per measure.
 
 ## Future Expansion
 

@@ -12,7 +12,7 @@ Rests only make sense in scroll mode. In the static/random-tap mode there's no i
 
 ## Rest Value Matches Current Note Value
 
-Rather than introducing a separate rest-value selector, the rest displayed is always the equivalent of the currently selected note value (from `01-rhythm-notation.md`):
+Rather than introducing a separate rest-value selector, the rest displayed is always the equivalent of the currently selected note value (from `00-rhythm-notation.md`):
 
 | Note value selected | Rest displayed |
 |---|---|
@@ -36,7 +36,7 @@ Off is the default, keeping existing behaviour unchanged.
 
 ## Interaction with Other Features
 
-- **Rhythm notation** (`01-rhythm-notation.md`) — rest glyph always mirrors the selected note value; when beamed groups are active, simplest approach is to substitute whole groups rather than individual notes within a group (avoids internal-rest-within-beam complexity).
+- **Rhythm notation** (`00-rhythm-notation.md`) — rest glyph always mirrors the selected note value; when beamed groups are active, simplest approach is to substitute whole groups rather than individual notes within a group (avoids internal-rest-within-beam complexity).
 - **Pattern sets** (`04-pattern-sets.md`) — sets sourced from real music may already contain rests; those should honour the source rest value rather than the session note value setting.
 
 ## Future Expansion

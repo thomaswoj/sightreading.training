@@ -78,8 +78,8 @@ New CSS module alongside the component. Three classes:
 
 ## Interaction with Other Features
 
-- **Rhythm notation** (`01-rhythm-notation.md`) — MVP uses note heads only; rhythm notation would be the natural next step for this view once the static layout is in place.
-- **Leading accidentals** (`03-leading-accidentals.md`) — accidental glyphs are already in the codebase; they should work in this view without additional changes.
+- **Rhythm notation** (`00-rhythm-notation.md`) — MVP uses note heads only; rhythm notation would be the natural next step for this view once the static layout is in place.
+- **Leading accidentals** (`02-leading-accidentals.md`) — accidental glyphs are already in the codebase; they should work in this view without additional changes.
 
 ## Out of Scope (MVP)
 

@@ -1,10 +1,10 @@
 # Feature: Occasional Mid-Session Time Signature Changes
 
-**Status:** Idea — low priority, implement well after `02-bar-lines-time-signature.md`
+**Status:** Idea — low priority, implement well after `01-bar-lines-time-signature.md`
 
 ## Concept
 
-When bar lines and time signatures are enabled, add an optional mode that occasionally substitutes a different time signature for a single bar before returning to the primary time signature. Similar in spirit to leading accidentals (`03-leading-accidentals.md`) — a brief disruption to the established pattern that the player must read and react to.
+When bar lines and time signatures are enabled, add an optional mode that occasionally substitutes a different time signature for a single bar before returning to the primary time signature. Similar in spirit to leading accidentals (`02-leading-accidentals.md`) — a brief disruption to the established pattern that the player must read and react to.
 
 For example: primarily in 4/4, but every so often a 3/4 bar appears, then 4/4 resumes. The player must notice the change (via the printed time sig glyph) and adjust their counting accordingly.
 
@@ -24,9 +24,9 @@ For example: primarily in 4/4, but every so often a 3/4 bar appears, then 4/4 re
 
 ## Interaction with Other Features
 
-- **Bar lines and time signature** (`02-bar-lines-time-signature.md`) — hard dependency; this feature is an extension of that one and cannot exist without it.
-- **Rhythm notation** (`01-rhythm-notation.md`) — the alternate bar's beat budget is denominated in the current note value; some combinations may not divide cleanly (e.g. 7/8 with quarter notes leaves a remainder). Generator should either avoid those combinations or handle the partial beat with a rest.
-- **Rests** (`06-rests.md`) — rests may be needed to fill awkward alternate bars cleanly.
+- **Bar lines and time signature** (`01-bar-lines-time-signature.md`) — hard dependency; this feature is an extension of that one and cannot exist without it.
+- **Rhythm notation** (`00-rhythm-notation.md`) — the alternate bar's beat budget is denominated in the current note value; some combinations may not divide cleanly (e.g. 7/8 with quarter notes leaves a remainder). Generator should either avoid those combinations or handle the partial beat with a rest.
+- **Rests** (`03-rests.md`) — rests may be needed to fill awkward alternate bars cleanly.
 
 ## Open Questions
 

@@ -131,9 +131,9 @@ A new `/dashboard` or `/stats` route (separate page, not a modal). Sections:
 
 ## Interaction with Other Features
 
-- **Rhythm notation** (`01-rhythm-notation.md`) — `note_value` field captures which note style was active; allows filtering analytics by complexity level.
+- **Rhythm notation** (`00-rhythm-notation.md`) — `note_value` field captures which note style was active; allows filtering analytics by complexity level.
 - **Pattern sets** (`04-pattern-sets.md`) — `set_library` and `sets_done` fields track set-mode sessions separately; could show accuracy per set library over time.
-- **Rests** (`06-rests.md`) — rests should not count as note attempts (the player isn't expected to press a key); the logging layer needs to exclude rest slots from `attempted` / `correct` counts.
+- **Rests** (`03-rests.md`) — rests should not count as note attempts (the player isn't expected to press a key); the logging layer needs to exclude rest slots from `attempted` / `correct` counts.
 
 ## Future Expansion
 

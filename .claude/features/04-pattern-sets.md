@@ -71,9 +71,9 @@ These can be replaced or supplemented once real sources are transcribed.
 
 ## Interaction with Other Features
 
-- **Rhythm notation** (`01-rhythm-notation.md`) — sets carry their own durations, so rhythm display is natural here; the note value selector becomes less relevant (or is overridden by the set's own values) when a set library is active.
-- **Leading accidentals** (`03-leading-accidentals.md`) — accidentals in sets come from the source material, not random insertion; the leading-accidental mode could still apply as an augmentation layered on top.
-- **Rests** (`06-rests.md`) — sets sourced from real music may already contain rests; those should honour the source value rather than the session note value.
+- **Rhythm notation** (`00-rhythm-notation.md`) — sets carry their own durations, so rhythm display is natural here; the note value selector becomes less relevant (or is overridden by the set's own values) when a set library is active.
+- **Leading accidentals** (`02-leading-accidentals.md`) — accidentals in sets come from the source material, not random insertion; the leading-accidental mode could still apply as an augmentation layered on top.
+- **Rests** (`03-rests.md`) — sets sourced from real music may already contain rests; those should honour the source value rather than the session note value.
 
 ## Future Expansion
 

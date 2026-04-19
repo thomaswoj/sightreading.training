@@ -33,8 +33,8 @@ When enabled, the generator sometimes prepends a chromatic neighbour note (sharp
 
 ## Interaction with Other Features
 
-- **Static staff view** (`00-play-along-staff.md`) — could pair well once that view is implemented; accidental glyphs are already in the codebase.
-- **Rhythm notation** (`01-rhythm-notation.md`) — the accidental glyph sits to the left of the notehead regardless of stem direction; should remain legible but worth testing at small sizes.
+- **Static staff view** (`09-play-along-staff.md`) — could pair well once that view is implemented; accidental glyphs are already in the codebase.
+- **Rhythm notation** (`00-rhythm-notation.md`) — the accidental glyph sits to the left of the notehead regardless of stem direction; should remain legible but worth testing at small sizes.
 - **Pattern sets** (`04-pattern-sets.md`) — accidentals in sets come from the source material, not random insertion; the leading-accidental mode could still apply as an augmentation layered on top.
 
 ## Future Expansion

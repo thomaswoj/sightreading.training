@@ -1,6 +1,6 @@
 # Feature: Bar Lines and Time Signature
 
-**Status:** Idea — implement after `01-rhythm-notation.md`
+**Status:** Idea — implement after `00-rhythm-notation.md`
 
 ## Concept
 
@@ -31,7 +31,7 @@ Currently the generator produces a stream of notes with no bar-awareness. Adding
 
 1. **Bar budget** — the generator tracks how many beats are left in the current bar. Each note (and rest) consumes beats according to its value. When the bar is full, a bar line is inserted and the budget resets.
 2. **Note value fitting** — the selected note value must divide evenly into the bar, or the generator must be smart enough to use rests or ties to complete a bar before starting the next. Simplest approach for MVP: only allow note value / time signature combinations that divide cleanly (e.g. quarter notes in 4/4 = 4 notes per bar; eighth notes in 6/8 = 6 notes per bar).
-3. **Bar-complete grouping for beams** — when beaming is active (`01-rhythm-notation.md`), beam groups should not cross bar lines. The bar boundary is also a beam boundary.
+3. **Bar-complete grouping for beams** — when beaming is active (`00-rhythm-notation.md`), beam groups should not cross bar lines. The bar boundary is also a beam boundary.
 
 ## Rendering Bar Lines
 
@@ -58,10 +58,10 @@ In scroll mode, bar lines scroll past with the staff at the same speed as notes.
 
 ## Interaction with Other Features
 
-- **Rhythm notation** (`01-rhythm-notation.md`) — prerequisite; bar lines only make sense once note values are defined, since the bar budget is denominated in note values. Beam groups must not cross bar lines.
-- **Rests** (`06-rests.md`) — rests consume the bar budget identically to notes; the generator uses rests to fill a bar if the remaining space doesn't fit a full note.
+- **Rhythm notation** (`00-rhythm-notation.md`) — prerequisite; bar lines only make sense once note values are defined, since the bar budget is denominated in note values. Beam groups must not cross bar lines.
+- **Rests** (`03-rests.md`) — rests consume the bar budget identically to notes; the generator uses rests to fill a bar if the remaining space doesn't fit a full note.
 - **Pattern sets** (`04-pattern-sets.md`) — patterns sourced from real music already have implicit bar structures; the bar line renderer should honour those boundaries rather than computing them from scratch.
-- **Chord symbols** (`09-chord-symbols.md`) — chord symbols sit above the staff, aligned to the bar line or beat position. Bar lines provide the structure they attach to.
+- **Chord symbols** (`06-chord-symbols.md`) — chord symbols sit above the staff, aligned to the bar line or beat position. Bar lines provide the structure they attach to.
 
 ## Future Expansion
 
