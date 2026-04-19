@@ -325,12 +325,6 @@
                 z-index: 1;
             }
 
-            .beam_1 {
-            }
-
-            .beam_2 {
-            }
-
             .beam_up {
                 left: calc(82% + 1px);
             }
@@ -355,24 +349,8 @@
                 top: 215%;
             }
 
-            &.note_whole {
-            }
-
-            &.note_half {
-            }
-
-            &.note_quarter {
-                .primary {
-                    transform: scale(0.95);
-                }
-            }
-
-            &.note_eighth {
-                .primary {
-                    transform: scale(0.95);
-                }
-            }
-
+            &.note_quarter,
+            &.note_eighth,
             &.note_sixteenth {
                 .primary {
                     transform: scale(0.95);

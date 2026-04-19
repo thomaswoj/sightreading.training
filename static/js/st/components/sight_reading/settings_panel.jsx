@@ -181,12 +181,12 @@ export class SettingsPanel extends React.PureComponent {
             key={value}
             onClick={e => this.props.setNoteValue && this.props.setNoteValue(value)}
             className={classNames(styles.toggle_option, {
-              [styles.active]: noteValue == value
+              [styles.active]: noteValue === value
             })}>{label}</button>)
         }
       </div>
 
-      {(noteValue == "eighth" || noteValue == "sixteenth") ? <>
+      {(noteValue === "eighth" || noteValue === "sixteenth") ? <>
         <div className={styles.input_label}>Beam group size</div>
         <div className={styles.button_group}>
           {
@@ -195,7 +195,7 @@ export class SettingsPanel extends React.PureComponent {
               key={value}
               onClick={e => this.props.setBeamGroupSize && this.props.setBeamGroupSize(value)}
               className={classNames(styles.toggle_option, {
-                [styles.active]: beamGroupSize == value
+                [styles.active]: beamGroupSize === value
               })}>{label}</button>)
           }
         </div>
@@ -209,7 +209,7 @@ export class SettingsPanel extends React.PureComponent {
             key={value}
             onClick={e => this.props.setStemDirection && this.props.setStemDirection(value)}
             className={classNames(styles.toggle_option, {
-              [styles.active]: stemDirection == value
+              [styles.active]: stemDirection === value
             })}>{label}</button>)
         }
       </div>

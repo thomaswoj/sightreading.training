@@ -584,7 +584,7 @@ export default class SightReadingPage extends React.Component {
 
         setNoteValue={this._setNoteValue ||= (noteValue) => this.setState((s) => ({
           noteValue,
-          beamGroupSize: (noteValue == "eighth" || noteValue == "sixteenth") ? s.beamGroupSize : "off",
+          beamGroupSize: (noteValue === "eighth" || noteValue === "sixteenth") ? s.beamGroupSize : "off",
         }))}
         setBeamGroupSize={this._setBeamGroupSize ||= (beamGroupSize) => this.setState({ beamGroupSize })}
         setStemDirection={this._setStemDirection ||= (stemDirection) => this.setState({ stemDirection })}

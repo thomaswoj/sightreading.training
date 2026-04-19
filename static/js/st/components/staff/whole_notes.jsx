@@ -5,6 +5,12 @@ import {parseNote, noteStaffOffset} from "st/music"
 import * as types from "prop-types"
 import styles from "st/components/staff.module.css"
 
+const MIN_BEAM_WIDTH = 4
+const BEAM_WIDTH_OFFSET = 8
+const MIN_BEAM_SLOPE_DEG = -14
+const MAX_BEAM_SLOPE_DEG = 14
+const BEAM_SLOPE_MULTIPLIER = 2.5
+
 export default class WholeNotes extends React.PureComponent {
   static defaultProps = {
     noteValue: "whole",
@@ -61,11 +67,11 @@ export default class WholeNotes extends React.PureComponent {
   }
 
   getStemDirection(row, groupRows=null) {
-    if (this.props.stemDirection == "up") {
+    if (this.props.stemDirection === "up") {
       return "up"
     }
 
-    if (this.props.stemDirection == "down") {
+    if (this.props.stemDirection === "down") {
       return "down"
     }
 
@@ -83,7 +89,7 @@ export default class WholeNotes extends React.PureComponent {
     let noteValue = this.props.noteValue
     let beamGroupSize = +(this.props.beamGroupSize || "0")
 
-    if ((noteValue != "eighth" && noteValue != "sixteenth") || !beamGroupSize) {
+    if ((noteValue !== "eighth" && noteValue !== "sixteenth") || !beamGroupSize) {
       return out
     }
 
@@ -91,7 +97,7 @@ export default class WholeNotes extends React.PureComponent {
       a[0].getStart() - b[0].getStart()
     )
 
-    for (let i=0; i < columns.length;) {
+    for (let i = 0; i < columns.length;) {
       let group = columns.slice(i, i + beamGroupSize)
       if (group.length < beamGroupSize) {
         break
@@ -99,13 +105,13 @@ export default class WholeNotes extends React.PureComponent {
 
       let consecutive = true
       let singleNotes = true
-      for (let k=0; k < group.length; k++) {
-        if (group[k].length != 1) {
+      for (let k = 0; k < group.length; k++) {
+        if (group[k].length !== 1) {
           singleNotes = false
           break
         }
 
-        if (k > 0 && group[k][0].getStart() != group[k - 1][0].getStart() + 1) {
+        if (k > 0 && group[k][0].getStart() !== group[k - 1][0].getStart() + 1) {
           consecutive = false
           break
         }
@@ -119,7 +125,7 @@ export default class WholeNotes extends React.PureComponent {
       let notes = group.map(g => g[0])
       let rows = notes.map(n => noteStaffOffset(this.props.keySignature.enharmonic(n.note)))
       let direction = this.getStemDirection(rows[0], rows)
-      let beamCount = noteValue == "sixteenth" ? 2 : 1
+      let beamCount = noteValue === "sixteenth" ? 2 : 1
 
       notes.forEach((note, idx) => {
         out.set(note.id, {
@@ -129,7 +135,7 @@ export default class WholeNotes extends React.PureComponent {
           lastNote: notes[notes.length - 1],
           firstRow: rows[0],
           lastRow: rows[rows.length - 1],
-          isStart: idx == 0,
+          isStart: idx === 0,
         })
       })
 
@@ -167,27 +173,27 @@ export default class WholeNotes extends React.PureComponent {
       noteClasses = props.noteClasses[note.id]
     }
 
-    let noteValue = props.noteValue || "whole"
+    let noteValue = props.noteValue
     let beamed = beamedNotes.get(note.id)
     let stemDirection = beamed?.direction || this.getStemDirection(row)
-    let useStem = noteValue != "whole"
-    let useFlag = (noteValue == "eighth" || noteValue == "sixteenth") && !beamed
+    let useStem = noteValue !== "whole"
+    let useFlag = (noteValue === "eighth" || noteValue === "sixteenth") && !beamed
 
     let classes = classNames(styles.note, {
-      [styles.is_flat]: accidentals == -1,
-      [styles.is_sharp]: accidentals == 1,
-      [styles.is_natural]: accidentals == 0,
+      [styles.is_flat]: accidentals === -1,
+      [styles.is_sharp]: accidentals === 1,
+      [styles.is_natural]: accidentals === 0,
       [styles.outside]: outside,
-      [styles.note_whole]: noteValue == "whole",
-      [styles.note_half]: noteValue == "half",
-      [styles.note_quarter]: noteValue == "quarter",
-      [styles.note_eighth]: noteValue == "eighth",
-      [styles.note_sixteenth]: noteValue == "sixteenth",
-      [styles.stem_up]: stemDirection == "up",
-      [styles.stem_down]: stemDirection == "down",
+      [styles.note_whole]: noteValue === "whole",
+      [styles.note_half]: noteValue === "half",
+      [styles.note_quarter]: noteValue === "quarter",
+      [styles.note_eighth]: noteValue === "eighth",
+      [styles.note_sixteenth]: noteValue === "sixteenth",
+      [styles.stem_up]: stemDirection === "up",
+      [styles.stem_down]: stemDirection === "down",
     }, noteClasses, props.staticNoteClasses)
 
-    let noteHeadSrc = (noteValue == "whole" || noteValue == "half")
+    let noteHeadSrc = (noteValue === "whole" || noteValue === "half")
       ? "/static/svg/noteheads.s0.svg"
       : "/static/svg/noteheads.s2.svg"
 
@@ -200,7 +206,7 @@ export default class WholeNotes extends React.PureComponent {
     }
 
     if (useFlag) {
-      let flagCount = noteValue == "sixteenth" ? 2 : 1
+      let flagCount = noteValue === "sixteenth" ? 2 : 1
       parts.push(<span key="flag-1" className={classNames(styles.flag, styles.flag_1)}></span>)
       if (flagCount > 1) {
         parts.push(<span key="flag-2" className={classNames(styles.flag, styles.flag_2)}></span>)
@@ -208,14 +214,14 @@ export default class WholeNotes extends React.PureComponent {
     }
 
     if (beamed && beamed.isStart) {
-      let beamWidth = Math.max(4, (beamed.lastNote.getStart() - beamed.firstNote.getStart()) * props.pixelsPerBeat + 8)
-      let slope = Math.max(-14, Math.min(14, (beamed.lastRow - beamed.firstRow) * 2.5))
+      let beamWidth = Math.max(MIN_BEAM_WIDTH, (beamed.lastNote.getStart() - beamed.firstNote.getStart()) * props.pixelsPerBeat + BEAM_WIDTH_OFFSET)
+      let slope = Math.max(MIN_BEAM_SLOPE_DEG, Math.min(MAX_BEAM_SLOPE_DEG, (beamed.lastRow - beamed.firstRow) * BEAM_SLOPE_MULTIPLIER))
       parts.push(<span
         key="beam-1"
-        style={{ width: `${beamWidth}px`, transform: `rotate(${slope}deg)` }}
-        className={classNames(styles.beam, styles.beam_1, {
-          [styles.beam_up]: stemDirection == "up",
-          [styles.beam_down]: stemDirection == "down",
+          style={{ width: `${beamWidth}px`, transform: `rotate(${slope}deg)` }}
+          className={classNames(styles.beam, styles.beam_1, {
+          [styles.beam_up]: stemDirection === "up",
+          [styles.beam_down]: stemDirection === "down",
         })}
       ></span>)
 
@@ -224,22 +230,22 @@ export default class WholeNotes extends React.PureComponent {
           key="beam-2"
           style={{ width: `${beamWidth}px`, transform: `rotate(${slope}deg)` }}
           className={classNames(styles.beam, styles.beam_2, {
-            [styles.beam_up]: stemDirection == "up",
-            [styles.beam_down]: stemDirection == "down",
+            [styles.beam_up]: stemDirection === "up",
+            [styles.beam_down]: stemDirection === "down",
           })}
         ></span>)
       }
     }
 
-    if (accidentals == 0) {
+    if (accidentals === 0) {
       parts.push(<img key="natural" className={classNames(styles.accidental, styles.natural)} src="/static/svg/natural.svg" />)
     }
 
-    if (accidentals == -1) {
+    if (accidentals === -1) {
       parts.push(<img key="flat" className={classNames(styles.accidental, styles.flat)} src="/static/svg/flat.svg" />)
     }
 
-    if (accidentals == 1) {
+    if (accidentals === 1) {
       parts.push(<img key="sharp" className={classNames(styles.accidental, styles.sharp)} src="/static/svg/sharp.svg" />)
     }
 
