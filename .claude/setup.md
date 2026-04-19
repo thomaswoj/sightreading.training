@@ -20,7 +20,6 @@ Needs to target OpenResty's LuaJIT, not system Lua — the fiddly part:
 luarocks --lua-dir=/usr/local/opt/openresty/luajit install lapis
 luarocks --lua-dir=/usr/local/opt/openresty/luajit install bcrypt
 luarocks --lua-dir=/usr/local/opt/openresty/luajit install tableshape
-eval $(luarocks --lua-dir=/usr/local/opt/openresty/luajit path)  # add to shell profile
 ```
 
 ## DB setup
@@ -45,6 +44,16 @@ npm install
 lapis server          # starts OpenResty/nginx on port 9090 (see config.moon)
 lapis term            # stops it
 ```
+
+## Shell profile (zsh)
+
+Add this to `~/.zshrc` so LuaRocks packages are on the path in every new shell session (already done on this machine):
+
+```zsh
+eval $(luarocks --lua-dir=/usr/local/opt/openresty/luajit path)
+```
+
+Without it, OpenResty can't find lapis/bcrypt/etc. at runtime — `require "lapis"` will fail. `eval` alone only affects the current session; the `.zshrc` entry makes it permanent.
 
 ## Notes
 
