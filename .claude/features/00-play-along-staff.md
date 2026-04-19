@@ -1,11 +1,10 @@
-# Feature
+# Feature: Static Staff View for Play-Along Mode
 
-Assess how to add a staff view to the /play-along (/song/) mode, i.e. show grand piano staff rather than the current duration blocks. 
+**Status:** Planned
 
-1. I'd like to be able to view as a staff (likely just grand piano staff)
-2. I'd like to be able to keep the display static, rather than moving, with the notes changing colour as I progress through, (like a step mode), rather than playing anything and having the screen move. This is to mimic a piano player looking at a paper sheet music. This would likely be setting or mode within /song/ etc 
+## Concept
 
-Do a feasibility study and update this markdown file with a plan.
+Add a staff notation view to the `/play-along` (`/song/`) mode — rendering a grand piano staff rather than the current duration-block view. The display should be static (non-scrolling), with note heads changing colour as the player progresses, mimicking reading from a paper sheet.
 
 ---
 
@@ -18,13 +17,13 @@ Do a feasibility study and update this markdown file with a plan.
 - **Custom SVG staff system** (`static/js/st/components/staves.jsx`): `GStaff` (treble), `FStaff` (bass), `GrandStaff` (both together) — already rendering clefs, key signatures, ledger lines.
 - **Note positioning maths**: `noteStaffOffset(note)` in `static/js/st/music.js` converts pitch to Y-position on staff.
 - **Full note data**: every `SongNote` has `note` (e.g. "C4"), `start` (beat), `duration` (beats). Structured in `SongNoteList` per track.
-- **Held-note tracking**: `heldSongNotes` state in `PlayAlongPage` already tracks which notes are currently active — same mechanism drives the coloring in the existing bar view.
+- **Held-note tracking**: `heldSongNotes` state in `PlayAlongPage` already tracks which notes are currently active — same mechanism drives the colouring in the existing bar view.
 
 ### What doesn't exist yet
 
 - A static (non-scrolling) display mode — the current view translates the staff horizontally as `beat` advances via CSS transform.
 - A "page" layout for notes — right now notes are laid out on an infinite horizontal tape; a staff view needs them laid out in measures across rows.
-- Color-change-on-progress logic for a staff notation context (closest existing thing is the `.held` class in `bar_notes.jsx`).
+- Colour-change-on-progress logic for a staff notation context (closest existing thing is the `.held` class in `bar_notes.jsx`).
 
 ---
 
@@ -53,7 +52,7 @@ Responsibilities:
 Re-use or adapt `WholeNotes` (`static/js/st/components/staff/whole_notes.jsx`) — it already renders circular note heads at a given position. Will need:
 - X position = `(beat within measure / beatsPerMeasure) * measureWidth`
 - Y position = existing `noteStaffOffset` output
-- Stems, beams: skip for MVP — note heads only, no beaming. Sufficient for readable reference and avoids significant complexity.
+- Stems, beams: skip for MVP — note heads only, no beaming. Sufficient for readable reference.
 - Accidentals: use existing sharp/flat SVG assets already in the codebase.
 
 ### 4. CSS
@@ -67,23 +66,29 @@ New CSS module alongside the component. Three classes:
 
 `PlayAlongPage` already calls `updateBeat(beat)` on every timer tick. Pass `currentBeat` as a prop down to `StaticStaffView` — React re-render will update note colours automatically. No additional timer/subscription needed.
 
----
-
-## Files to create / modify
+## Files to Create / Modify
 
 | File | Action |
-|------|--------|
+|---|---|
 | `static/js/st/components/pages/play_along_page.jsx` | Add `staffView` state, toggle button, conditional render |
 | `static/js/st/components/pages/static_staff_view.jsx` | **New** — main static staff layout component |
 | `static/js/st/components/pages/static_staff_view.module.css` | **New** — note colour classes |
 | `static/js/st/components/staves.jsx` | Likely no changes — reuse `GrandStaff` as-is |
 | `static/js/st/components/staff/whole_notes.jsx` | Minor: accept optional `colorClass` prop |
 
----
+## Interaction with Other Features
 
-## Out of scope (MVP)
+- **Rhythm notation** (`01-rhythm-notation.md`) — MVP uses note heads only; rhythm notation would be the natural next step for this view once the static layout is in place.
+- **Leading accidentals** (`02-leading-accidentals.md`) — accidental glyphs are already in the codebase; they should work in this view without additional changes.
+
+## Out of Scope (MVP)
 
 - Beam groups / stem direction
 - Multi-page scrolling (scroll to current measure row is fine)
 - Automatic audio playback (purely visual step-mode)
-- Per-track staff type selection (grand piano staff only, matching the request)
+- Per-track staff type selection (grand piano staff only)
+
+## Open Questions
+
+- How many measures per row before wrapping? Fixed (e.g. 4) or dynamic based on viewport width?
+- Should the view auto-scroll vertically to keep the active measure row visible?
