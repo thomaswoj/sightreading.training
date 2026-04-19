@@ -1,10 +1,10 @@
 # Task: Sourcing Pattern Sets
 
-**Status:** Idea — blocked on `03-pattern-sets.md` set format being finalised
+**Status:** Idea — blocked on `04-pattern-sets.md` set format being finalised
 
 ## Goal
 
-Identify, extract, and encode short melodic/harmonic patterns from well-known public-domain or licensed sources into the set data format defined in `03-pattern-sets.md`. Priority is patterns that are:
+Identify, extract, and encode short melodic/harmonic patterns from well-known public-domain or licensed sources into the set data format defined in `04-pattern-sets.md`. Priority is patterns that are:
 
 - Idiomatic and frequently recurring in that genre
 - Short enough to work as a single set (2–8 notes, up to 12 for jazz)
@@ -81,7 +81,7 @@ Identify, extract, and encode short melodic/harmonic patterns from well-known pu
 
 ## Implementation Tasks
 
-- [ ] Finalise internal set format (see `03-pattern-sets.md` for draft schema)
+- [ ] Finalise internal set format (see `04-pattern-sets.md` for draft schema)
 - [ ] Write a parser/importer for MusicXML → set JSON (could use music21 in Python as a one-off script)
 - [ ] Extract Bach chorale soprano lines via music21 script
 - [ ] Extract Hanon base patterns from MIDI or MusicXML

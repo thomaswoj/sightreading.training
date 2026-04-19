@@ -66,9 +66,9 @@ If Pretext can handle iterative constraint solving (e.g. "all stems touch this b
 
 ## Interaction with Other Features
 
-- **Leading accidentals** (`02-leading-accidentals.md`) — the accidental glyph sits to the left of the notehead regardless of stem direction; should be fine but worth verifying visually at small staff sizes.
-- **Pattern sets** (`03-pattern-sets.md`) — sets carry their own durations, so the note value selector becomes less relevant (or is overridden by the set's own values) when a set library is active.
-- **Rests** (`05-rests.md`) — the rest glyph displayed always matches the currently selected note value; beamed groups interact with rest substitution (see rests feature).
+- **Leading accidentals** (`03-leading-accidentals.md`) — the accidental glyph sits to the left of the notehead regardless of stem direction; should be fine but worth verifying visually at small staff sizes.
+- **Pattern sets** (`04-pattern-sets.md`) — sets carry their own durations, so the note value selector becomes less relevant (or is overridden by the set's own values) when a set library is active.
+- **Rests** (`06-rests.md`) — the rest glyph displayed always matches the currently selected note value; beamed groups interact with rest substitution (see rests feature).
 
 ## Open Questions
 
