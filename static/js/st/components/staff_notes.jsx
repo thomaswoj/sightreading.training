@@ -41,6 +41,9 @@ export default class StaffNotes extends React.Component {
         keySignature={this.props.keySignature}
         upperRow={this.props.upperRow}
         lowerRow={this.props.lowerRow}
+        noteValue={this.props.noteValue}
+        beamGroupSize={this.props.beamGroupSize}
+        stemDirection={this.props.stemDirection}
         notes={songNotes}
         noteClasses={noteClasses}
         pixelsPerBeat={this.props.noteWidth}
@@ -51,6 +54,9 @@ export default class StaffNotes extends React.Component {
         keySignature={this.props.keySignature}
         upperRow={this.props.upperRow}
         lowerRow={this.props.lowerRow}
+        noteValue={this.props.noteValue}
+        beamGroupSize={this.props.beamGroupSize}
+        stemDirection={this.props.stemDirection}
         notes={heldSongNotes}
         staticNoteClasses={styles.held}
         pixelsPerBeat={this.props.noteWidth}
@@ -102,6 +108,7 @@ export default class StaffNotes extends React.Component {
   convertToSongNotes() {
     let notes = new SongNoteList()
     let beat = 0
+    let stableBeat = this.props.notes.consumedCount || 0
     let dur = 40 / this.props.noteWidth
 
     let noteClasses = {}
@@ -152,6 +159,7 @@ export default class StaffNotes extends React.Component {
           }
 
           let sNote = new SongNote(n, beat, dur)
+          sNote.stableStart = stableBeat
 
           if (offset == 1) {
             appendClass(sNote, "group_offset")
@@ -162,10 +170,13 @@ export default class StaffNotes extends React.Component {
         })
 
       } else {
-        notes.push(withClasses(new SongNote(column, beat, dur)))
+        let sNote = new SongNote(column, beat, dur)
+        sNote.stableStart = stableBeat
+        notes.push(withClasses(sNote))
       }
 
       beat += 1
+      stableBeat += 1
     })
 
     return [this.filterVisibleNotes(notes), noteClasses]

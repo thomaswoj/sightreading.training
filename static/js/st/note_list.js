@@ -20,6 +20,8 @@ export default class NoteList extends Array {
       this.generator = opts.generator
     }
 
+    this.consumedCount = opts.consumedCount || 0
+
     if (notes && notes.length) {
       this.push.apply(this, notes);
     }
@@ -34,10 +36,16 @@ export default class NoteList extends Array {
   clone() {
     // this assumes that the individual note/columns are immutable
     let list = new NoteList(this, {
-      generator: this.generator
+      generator: this.generator,
+      consumedCount: this.consumedCount,
     })
 
     return list
+  }
+
+  shift() {
+    this.consumedCount++
+    return super.shift()
   }
 
   filterByRange(min, max) {

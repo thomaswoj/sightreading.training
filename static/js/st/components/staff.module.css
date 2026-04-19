@@ -243,12 +243,99 @@
             height: 20%;
             transform: translate(0, -47%);
             transition: 0.1s ease transform;
-
-            &.whole_note {
-            }
+            z-index: 1;
 
             .primary {
                 height: 100%;
+                position: relative;
+                z-index: 3;
+            }
+
+            .stem {
+                position: absolute;
+                width: 2px;
+                background: #111;
+                border-radius: 1px;
+                z-index: 2;
+            }
+
+            &.stem_up {
+                .stem {
+                    left: 92%;
+                    top: -170%;
+                    height: 220%;
+                }
+            }
+
+            &.stem_down {
+                .stem {
+                    left: 4%;
+                    top: 45%;
+                    height: 220%;
+                }
+            }
+
+            .flag {
+                position: absolute;
+                font-family: 'Bravura', serif;
+                font-size: 320%;
+                line-height: 1;
+                z-index: 2;
+            }
+
+            &.stem_up {
+                .flag_up {
+                    left: calc(96% - 1px);
+                    top: -260%;
+                }
+            }
+
+            &.stem_down {
+                .flag_down {
+                    left: calc(11% - 2px);
+                    top: 195%;
+                }
+            }
+
+            .beam {
+                position: absolute;
+                height: 5px;
+                background: #111;
+                transform-origin: left center;
+                border-radius: 1px;
+                z-index: 1;
+            }
+
+            .beam_up {
+                left: calc(92% + 1px);
+            }
+
+            .beam_down {
+                left: calc(4% - 0px);
+            }
+
+            .beam_1.beam_up {
+                top: -170%;
+            }
+
+            .beam_2.beam_up {
+                top: -140%;
+            }
+
+            .beam_1.beam_down {
+                top: 245%;
+            }
+
+            .beam_2.beam_down {
+                top: 215%;
+            }
+
+            &.note_quarter,
+            &.note_eighth,
+            &.note_sixteenth {
+                .primary {
+                    transform: scale(0.95);
+                }
             }
 
             &.group_offset {
