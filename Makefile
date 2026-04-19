@@ -12,7 +12,10 @@ static/js/st/staff_assets.jsx: $(wildcard static/staff/*.svg)
 	@echo "  assets  static/staff/*.svg"
 	@(echo 'import * as React from "react"'; for file in $^; do echo "export const $$(basename $$file .svg | tr a-z A-Z) = $$(cat $$file);"; done) > $@
 
-build: static/js/st/song_parser_peg.js static/js/st/staff_assets.jsx
+compile:
+	find . -name "*.moon" -not -path "./node_modules/*" | xargs moonc
+
+build: compile static/js/st/song_parser_peg.js static/js/st/staff_assets.jsx
 	@echo "  esbuild static/js/st/main.jsx"
 	@NODE_PATH=static/js $(ESBUILD) static/js/st/main.jsx $(ESBUILD_FLAGS) --outfile=static/main.js
 	@echo "  done"
