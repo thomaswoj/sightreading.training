@@ -243,12 +243,140 @@
             height: 20%;
             transform: translate(0, -47%);
             transition: 0.1s ease transform;
-
-            &.whole_note {
-            }
+            z-index: 1;
 
             .primary {
                 height: 100%;
+                position: relative;
+                z-index: 3;
+            }
+
+            .stem {
+                position: absolute;
+                width: 2px;
+                background: #111;
+                border-radius: 1px;
+                z-index: 2;
+            }
+
+            &.stem_up {
+                .stem {
+                    left: 82%;
+                    top: -170%;
+                    height: 220%;
+                }
+            }
+
+            &.stem_down {
+                .stem {
+                    left: 18%;
+                    top: 45%;
+                    height: 220%;
+                }
+            }
+
+            .flag {
+                position: absolute;
+                width: 16px;
+                height: 8px;
+                background: #111;
+                border-radius: 4px;
+                z-index: 2;
+            }
+
+            &.stem_up {
+                .flag {
+                    left: calc(82% + 1px);
+                    transform-origin: left center;
+                    transform: rotate(26deg);
+                }
+
+                .flag_1 {
+                    top: -170%;
+                }
+
+                .flag_2 {
+                    top: -140%;
+                }
+            }
+
+            &.stem_down {
+                .flag {
+                    left: calc(18% - 14px);
+                    transform-origin: right center;
+                    transform: rotate(-26deg);
+                }
+
+                .flag_1 {
+                    top: 250%;
+                }
+
+                .flag_2 {
+                    top: 220%;
+                }
+            }
+
+            .beam {
+                position: absolute;
+                height: 8px;
+                background: #111;
+                transform-origin: left center;
+                border-radius: 2px;
+                z-index: 1;
+            }
+
+            .beam_1 {
+            }
+
+            .beam_2 {
+            }
+
+            .beam_up {
+                left: calc(82% + 1px);
+            }
+
+            .beam_down {
+                left: calc(18% - 1px);
+            }
+
+            .beam_1.beam_up {
+                top: -170%;
+            }
+
+            .beam_2.beam_up {
+                top: -140%;
+            }
+
+            .beam_1.beam_down {
+                top: 245%;
+            }
+
+            .beam_2.beam_down {
+                top: 215%;
+            }
+
+            &.note_whole {
+            }
+
+            &.note_half {
+            }
+
+            &.note_quarter {
+                .primary {
+                    transform: scale(0.95);
+                }
+            }
+
+            &.note_eighth {
+                .primary {
+                    transform: scale(0.95);
+                }
+            }
+
+            &.note_sixteenth {
+                .primary {
+                    transform: scale(0.95);
+                }
             }
 
             &.group_offset {

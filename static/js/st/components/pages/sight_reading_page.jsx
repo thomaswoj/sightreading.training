@@ -73,6 +73,9 @@ export default class SightReadingPage extends React.Component {
       scale: window.innerWidth < 1000 ? 0.8 : 1,
       stats: new NoteStats(session.currentUser),
       keySignature: new KeySignature(0),
+      noteValue: "whole",
+      beamGroupSize: "off",
+      stemDirection: "auto",
     }
   }
 
@@ -570,11 +573,21 @@ export default class SightReadingPage extends React.Component {
         currentGeneratorSettings={this.state.currentGeneratorSettings}
         currentStaff={this.state.currentStaff}
         currentKey={this.state.keySignature}
+        currentNoteValue={this.state.noteValue}
+        beamGroupSize={this.state.beamGroupSize}
+        stemDirection={this.state.stemDirection}
 
         setGenerator={this._setGenerator ||= (g, settings) => this.setState({
           currentGenerator: g,
           currentGeneratorSettings: settings,
         })}
+
+        setNoteValue={this._setNoteValue ||= (noteValue) => this.setState((s) => ({
+          noteValue,
+          beamGroupSize: (noteValue == "eighth" || noteValue == "sixteenth") ? s.beamGroupSize : "off",
+        }))}
+        setBeamGroupSize={this._setBeamGroupSize ||= (beamGroupSize) => this.setState({ beamGroupSize })}
+        setStemDirection={this._setStemDirection ||= (stemDirection) => this.setState({ stemDirection })}
 
         setKeySignature={this._setKeySignature ||= this.setKeySignature.bind(this)}
         setStaff={this._setStaff ||= this.setStaff.bind(this)}
@@ -690,6 +703,9 @@ export default class SightReadingPage extends React.Component {
            noteWidth = {this.state.noteWidth}
            noteShaking = {this.state.noteShaking}
            scale = {this.state.scale}
+           noteValue = {this.state.noteValue}
+           beamGroupSize = {this.state.beamGroupSize}
+           stemDirection = {this.state.stemDirection}
           />
       } else {
         staff = this.state.currentStaff.render.call(this, {
@@ -699,6 +715,9 @@ export default class SightReadingPage extends React.Component {
           noteWidth: this.state.noteWidth,
           noteShaking: this.state.noteShaking,
           scale: this.state.scale,
+          noteValue: this.state.noteValue,
+          beamGroupSize: this.state.beamGroupSize,
+          stemDirection: this.state.stemDirection,
         })
       }
     }

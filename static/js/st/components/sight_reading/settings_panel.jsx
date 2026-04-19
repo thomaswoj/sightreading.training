@@ -20,6 +20,12 @@ export class SettingsPanel extends React.PureComponent {
     generators: types.array.isRequired,
     setStaff: types.func.isRequired,
     setGenerator: types.func.isRequired,
+    currentNoteValue: types.string,
+    beamGroupSize: types.string,
+    stemDirection: types.string,
+    setNoteValue: types.func,
+    setBeamGroupSize: types.func,
+    setStemDirection: types.func,
   }
 
   constructor(props) {
@@ -45,6 +51,7 @@ export class SettingsPanel extends React.PureComponent {
       <section className={styles.settings_group}>
         <h4>Staff</h4>
         {this.renderStaves()}
+        {this.renderRhythmNotation()}
       </section>
 
       <section className={styles.settings_group}>
@@ -144,6 +151,69 @@ export class SettingsPanel extends React.PureComponent {
         })
       }
     </div>
+  }
+
+  renderRhythmNotation() {
+    let noteValue = this.props.currentNoteValue || "whole"
+    let beamGroupSize = this.props.beamGroupSize || "off"
+    let stemDirection = this.props.stemDirection || "auto"
+
+    let noteValues = [
+      ["whole", "Whole"],
+      ["half", "Half"],
+      ["quarter", "Quarter"],
+      ["eighth", "8th"],
+      ["sixteenth", "16th"],
+    ]
+
+    let stemDirections = [
+      ["auto", "Auto"],
+      ["up", "Up"],
+      ["down", "Down"],
+    ]
+
+    return <>
+      <div className={styles.input_label}>Note value</div>
+      <div className={styles.button_group}>
+        {
+          noteValues.map(([value, label]) => <button
+            type="button"
+            key={value}
+            onClick={e => this.props.setNoteValue && this.props.setNoteValue(value)}
+            className={classNames(styles.toggle_option, {
+              [styles.active]: noteValue == value
+            })}>{label}</button>)
+        }
+      </div>
+
+      {(noteValue == "eighth" || noteValue == "sixteenth") ? <>
+        <div className={styles.input_label}>Beam group size</div>
+        <div className={styles.button_group}>
+          {
+            [["off", "Off"], ["2", "2"], ["3", "3"], ["4", "4"]].map(([value, label]) => <button
+              type="button"
+              key={value}
+              onClick={e => this.props.setBeamGroupSize && this.props.setBeamGroupSize(value)}
+              className={classNames(styles.toggle_option, {
+                [styles.active]: beamGroupSize == value
+              })}>{label}</button>)
+          }
+        </div>
+      </> : null}
+
+      <div className={styles.input_label}>Stem direction</div>
+      <div className={styles.button_group}>
+        {
+          stemDirections.map(([value, label]) => <button
+            type="button"
+            key={value}
+            onClick={e => this.props.setStemDirection && this.props.setStemDirection(value)}
+            className={classNames(styles.toggle_option, {
+              [styles.active]: stemDirection == value
+            })}>{label}</button>)
+        }
+      </div>
+    </>
   }
 
   renderGenerators() {
