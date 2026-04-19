@@ -6,3 +6,8 @@ logs/
 *.tar.gz
 *.lua
 nginx.conf.compiled
+static/main.js
+static/main.js.map
+static/main.css.map
+static/js/st/song_parser_peg.js
+static/js/st/staff_assets.jsx
